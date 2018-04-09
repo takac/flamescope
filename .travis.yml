@@ -12,18 +12,21 @@ matrix:
     - language: python
       python:
         - 2.7
-        - 3.6
       install:
-        - pip install -r requirements.txt
-        - pip install -r test-requirements.txt
+        - pip install tox
       script:
-        - flake8 app
+        - tox -e py27
     - language: python
       python:
-        - 2.7
         - 3.6
       install:
-        - pip install -r requirements.txt
-        - pip install -r test-requirements.txt
+        - pip install tox
       script:
-        - python -m pytest
+        - tox -e py36
+    - language: pyhton
+      python:
+        - 3.6
+      install:
+        - pip install tox
+      script:
+        - tox -e flake8
