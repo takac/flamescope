@@ -17,16 +17,16 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from ..common import fileutil
+from flamescope.common import fileutil
 import os
 import gzip
 import collections
 from flask import abort
 from os import walk
 from os.path import abspath, join
-from app import config
+from flamescope import app
 from math import ceil, floor
-from .regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
+from flamescope.util.regexp import event_regexp, idle_regexp, comm_regexp, frame_regexp
 
 stack_times = {}        # cached start and end times for profiles
 stack_mtimes = {}       # modification timestamp for profiles
@@ -41,8 +41,8 @@ stack_index = {}        # cached event times
 # get profile files
 def get_stack_list():
     all_files = []
-    for root, dirs, files in walk(join(config.STACK_DIR)):
-        start = root[len(config.STACK_DIR) + 1:]
+    for root, dirs, files in walk(join(app.APP.config['STACK_DIR'])):
+        start = root[len(app.APP.config['STACK_DIR']) + 1:]
         for f in files:
             if not f.startswith('.'):
                 all_files.append(join(start, f))
@@ -57,7 +57,7 @@ def calculate_stack_range(filename):
     start = float("+inf")
     end = float("-inf")
     index_factor = 100      # save one timestamp per this many lines
-    path = config.STACK_DIR + '/' + filename
+    path = join(app.APP.config['STACK_DIR'], filename)
 
     if not fileutil.validpath(path):
         return abort(500)
@@ -164,9 +164,9 @@ def add_stack(root, stack, comm):
 
 # return stack samples for a given range
 def generate_stack(filename, range_start=None, range_end=None):
-    path = join(config.STACK_DIR, filename)
+    path = join(app.APP.config['STACK_DIR'], filename)
     # ensure the file is below STACK_DIR:
-    if not abspath(path).startswith(abspath(config.STACK_DIR)):
+    if not abspath(path).startswith(abspath(app.APP.config['STACK_DIR'])):
         print("ERROR: File %s is not in STACK_DIR" % path)
         return abort(404)
 

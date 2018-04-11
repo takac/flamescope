@@ -19,7 +19,7 @@
 
 from flask import Blueprint, request, jsonify
 
-from app.util.stack import generate_stack, get_stack_list
+from flamescope.util.stack import generate_stack, get_stack_list
 
 MOD_STACK = Blueprint(
     'stack', __name__, url_prefix='/stack'

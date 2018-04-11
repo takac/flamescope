@@ -17,16 +17,16 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from ..common import fileutil
+from flamescope.common import fileutil
 import os
 import gzip
 import collections
 from os.path import abspath, join
 from math import ceil, floor
 from flask import abort
+from flamescope import app
 
-from app import config
-from .regexp import event_regexp, idle_regexp
+from flamescope.util.regexp import event_regexp, idle_regexp
 
 # global defaults
 YRATIO = 1000   # milliseconds
@@ -39,9 +39,9 @@ def read_offsets(filename):
     start = float("+inf")
     end = float("-inf")
     offsets = []
-    path = join(config.STACK_DIR, filename)
+    path = join(app.APP.config['STACK_DIR'], filename)
     # ensure the file is below STACK_DIR:
-    if not abspath(path).startswith(abspath(config.STACK_DIR)):
+    if not abspath(path).startswith(abspath(app.APP.config['STACK_DIR'])):
         print("ERROR: File %s is not in STACK_DIR" % path)
         return abort(404)
 
